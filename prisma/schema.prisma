@@ -1,0 +1,127 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  firstName       String
+  lastName        String
+  password        String
+  isVerified      Boolean        @default(false)
+  isActive        Boolean        @default(true)
+  isDeleted       Boolean        @default(false)
+  passwordVersion Int            @default(1)
+  role            Role           @default(USER)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  BureauReport    BureauReport[]
+
+  @@index([email])
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otp       String
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@index([email])
+}
+
+model Statement {
+  id                 String        @id @default(uuid())
+  userId             String
+  name               String
+  csvHash            String
+  periodFrom         DateTime?
+  periodTo           DateTime?
+  rowsTotal          Int           @default(0)
+  rowsParsed         Int           @default(0)
+  rowsRejected       Int           @default(0)
+  parsingSuccessRate Float         @default(0)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  isDeleted          Boolean       @default(false)
+  transactions       Transaction[]
+
+  @@unique([userId, csvHash])
+  @@index([userId, createdAt])
+}
+
+model Transaction {
+  id          String          @id @default(uuid())
+  statementId String
+  date        DateTime
+  description String
+  type        TransactionType
+  amount      Decimal         @db.Decimal(20, 2)
+  balance     Decimal?        @db.Decimal(20, 2)
+  updatedAt   DateTime        @updatedAt
+
+  statement Statement @relation(fields: [statementId], references: [id])
+
+  @@index([statementId, date])
+}
+
+model Insight {
+  id                 String   @id @default(uuid())
+  userId             String
+  statementIds       Json
+  periodFrom         DateTime
+  periodTo           DateTime
+  inflow             Decimal  @db.Decimal(20, 2)
+  outflow            Decimal  @db.Decimal(20, 2)
+  net                Decimal  @db.Decimal(20, 2)
+  avgMonthlyIncome3m Decimal? @db.Decimal(20, 2)
+  spendBuckets       Json
+  riskFlags          Json
+  parsingSuccessRate Float
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([userId, createdAt])
+}
+
+model BureauReport {
+  id            String   @id @default(uuid())
+  requestedById String
+  provider      String
+  score         Int
+  riskBand      String
+  enquiries6m   Int
+  defaults      Int
+  openLoans     Int
+  tradeLines    Json
+  raw           Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  requestedBy User @relation(fields: [requestedById], references: [id])
+
+  @@index([requestedById, createdAt])
+}
