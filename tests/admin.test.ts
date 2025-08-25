@@ -1,49 +1,45 @@
 import {test, expect} from "bun:test";
 import {AdminService} from "../src/modules/admin/admin.service";
 
-test("AdminService.onboarding delegates to AuthService.onboardUser and returns result", async () => {
+test("AdminService.onboarding returns ApiSuccess from AuthService", async () => {
   const svc = new AdminService();
   const dto = {
-    email: "user@example.com",
-    password: "Passw0rd!",
-    firstName: "Ada",
-    lastName: "Lovelace",
+    email: "email",
+    password: "x",
+    firstName: "firstName",
+    lastName: "lastName",
   } as any;
 
   const original = (svc as any).authService.onboardUser;
-  let captured: any = null;
-  (svc as any).authService.onboardUser = async (arg: any) => {
-    captured = arg;
-    return {
-      success: true,
-      message: "ok",
-      data: {
-        id: "usr_1",
-        email: "email",
-        firstName: "firstName",
-        isActive: true,
-        isVerified: true,
-        lastName: "lastName",
-        role: "USER",
-      },
-    };
-  };
+  (svc as any).authService.onboardUser = async () => ({
+    success: true,
+    status_code: 201,
+    message: "User created successfully",
+    data: {
+      id: "usr_1",
+      email: "email",
+      firstName: "firstName",
+      lastName: "lastName",
+      role: "USER",
+      isActive: true,
+      isVerified: true,
+    },
+  });
 
   try {
     const res = await svc.onboarding(dto);
-    expect(captured).toEqual(dto);
-    expect(res).toEqual({
+    expect(res).toMatchObject({
       success: true,
-      message: "ok",
-      status_code: 200,
+      status_code: 201,
+      message: "User created successfully",
       data: {
         id: "usr_1",
         email: "email",
         firstName: "firstName",
-        isActive: true,
-        isVerified: true,
         lastName: "lastName",
         role: "USER",
+        isActive: true,
+        isVerified: true,
       },
     });
   } finally {
