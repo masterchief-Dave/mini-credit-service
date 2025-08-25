@@ -41,6 +41,7 @@ bun install
 
 ## App
 
+```sh
 PORT=5000
 NODE_ENV=development
 APP_NAME="Mini Credit Insight"
@@ -54,22 +55,23 @@ PRETTY_LOGS=true
 DATABASE_URL="mysql://root:root@localhost:3306/mini_credit_db"
 MOCK_BUREAU_URL=""
 BUREAU_API_KEY=""
+```
 
 ## generate prisma client
 
-bun run prisma:generate
+`bun run prisma:generate`
 
 ## create & apply dev migration
 
-bun run prisma:migrate
+`bun run prisma:migrate`
 
 ## Start the server
 
-bun run dev
+`bun run dev`
 
 ## build and start everything
 
-docker compose up -d --build
+`docker compose up -d --build`
 
 ### Adminer (DB UI)
 
@@ -88,15 +90,15 @@ Database: mini_credit_db
 
 If you added a seed script for an admin:
 
-bun run seed:admin
+`bun run seed:admin`
 
 ### or inside the container
 
-docker compose exec app bun run seed:admin
+`docker compose exec app bun run seed:admin`
 
 ### Testing
 
-NODE_ENV=test bun test
+`NODE_ENV=test bun test`
 
 ### Bureau Check (Mock, Static)
 
@@ -104,7 +106,7 @@ POST /bureau/check always returns the same normalized payload (score, risk band,
 
 If MOCK_BUREAU_URL is set, the service will attempt an HTTP call with retries/timeouts and X-API-KEY (from BUREAU_API_KEY) but still returns the static normalized values outward.
 
-```http
+```text
 # Health
 curl -s http://localhost:5000/api/v1/health
 
@@ -134,22 +136,22 @@ curl -X POST http://localhost:5000/api/v1/bureau/check \
 
 ### Notes / Planned Improvements
 
-Email queue (BullMQ/Redis): move email sending to a background job to keep API responses fast and add retries/backoff.
+- Email queue (BullMQ/Redis): move email sending to a background job to keep API responses fast and add retries/backoff.
 
-OTP lifecycle: periodically clear the OTP table (TTL/cron) to avoid stale records.
+- OTP lifecycle: periodically clear the OTP table (TTL/cron) to avoid stale records.
 
-Metrics/Tracing: export metrics to Prometheus and consider OpenTelemetry for tracing.
+- Metrics/Tracing: export metrics to Prometheus and consider OpenTelemetry for tracing.
 
-Uploads & parsing: better handling of document uploads and parsing (multi-bank formats, header mapping, locale-aware numbers/dates, stronger validation), optional S3/object storage for originals.
+- Uploads & parsing: better handling of document uploads and parsing (multi-bank formats, header mapping, locale-aware numbers/dates, stronger validation), optional S3/object storage for originals.
 
-Onboarding process: richer admin/user onboarding flow, temporary passwords, verification links, and improved templates.
+- Onboarding process: richer admin/user onboarding flow, temporary passwords, verification links, and improved templates.
 
-RBAC & Auditing: finer-grained permissions and comprehensive admin action logs.
+- RBAC & Auditing: finer-grained permissions and comprehensive admin action logs.
 
 ### Project Info
 
-Runtime: Bun v1.x
+Runtime: Bun v1.2.7
 
-Start (compose): docker compose up -d --build
+Start (compose): `docker compose up -d --build`
 
-Start (dev): bun run dev
+Start (dev): `bun run dev`
