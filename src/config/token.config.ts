@@ -32,11 +32,11 @@ export const verifyToken = (token: string): CustomJwtPayload => {
     return payload;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      throw new ApiError(401, "Token Expired");
+      throw ApiError.badRequest("Token Expired");
     }
 
     if (error instanceof jwt.JsonWebTokenError) {
-      throw new ApiError(401, "Invalid Token");
+      throw ApiError.badRequest("Invalid Token");
     }
 
     throw error;

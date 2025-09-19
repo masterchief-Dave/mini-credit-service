@@ -19,11 +19,11 @@
   "include": [
     "src",
     "prisma",
+    "generated",
     "tests"
   ],
   "exclude": [
     "node_modules",
-    "generated",
     "dist"
   ]
 }

@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "bun --hot src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "bun run build && bun dist/server.js",
+    "build": "bun run prisma:generate && tsc -p tsconfig.json && bunx shx mkdir -p dist && bunx shx cp -r generated dist/generated",
+    "start": "bun run build && bun dist/src/server.js",
     "seed:admin": "bun run src/seed/seed-admin.ts",
     "prisma:generate": "bunx prisma generate",
     "prisma:migrate": "bunx prisma migrate dev --name init",

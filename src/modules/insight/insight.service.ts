@@ -3,9 +3,9 @@ import {Role, TransactionType} from "../../../generated/prisma";
 import {prisma} from "../../db/prisma";
 import {ApiError, ApiSuccess} from "../../utils/api.response.utils";
 import {percentageCalculator} from "../../utils/helpers.utils";
-import {bucketFor, NecessityBucket} from "./insight.config";
-import {RunInput, RunInsightsBodyDTO, SpendBucket} from "./insight.interface";
 import {AuthenticatedUser} from "../user/user.interface";
+import {bucketFor, NecessityBucket} from "./insight.config";
+import {RunInsightsBodyDTO, SpendBucket} from "./insight.interface";
 
 export class InsightService {
   constructor() {

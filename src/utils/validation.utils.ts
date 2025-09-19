@@ -45,11 +45,11 @@ export async function hashOTP(otpCode: string) {
 
 export async function compareOTP(incomingOTP: string, existingOTP: string) {
   if (!incomingOTP || !existingOTP) {
-    throw ApiError.badRequest("Please provide a password");
+    throw ApiError.badRequest("Please provide an OTP");
   }
   const isMatch = await Bun.password.verify(incomingOTP, existingOTP);
   if (!isMatch) {
-    throw ApiError.unauthorized("Password or email is incorrect");
+    throw ApiError.unauthorized("OTP incorrect");
   }
 }
 
